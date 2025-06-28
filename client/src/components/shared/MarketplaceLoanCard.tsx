@@ -26,33 +26,42 @@ export function MarketplaceLoanCard({
 
   return (
     <motion.div
-      whileHover={{ y: -4, scale: 1.02 }}
+      whileHover={{ y: -6, scale: 1.03 }}
+      whileTap={{ scale: 0.97 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="h-full"
     >
-      <Card className="border border-border rounded-xl p-4 transition-all duration-300 hover:shadow-lg hover:border-primary/30 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
-        <CardContent className="p-0">
+      <Card className="enhanced-card group overflow-hidden relative h-full flex flex-col">
+        {/* Animated background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-0 group-hover:opacity-100 transition-all duration-500" />
+        
+        {/* Subtle border glow effect */}
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/20 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
+        
+        <CardContent className="p-6 relative z-10 flex-1">
           <div className="flex justify-between items-start mb-4">
-            <div>
+            <div className="space-y-2">
               <motion.span 
-                className={`text-xs py-1.5 px-3 rounded-full font-medium ${typeClass} shadow-sm`}
+                className={`text-xs py-1.5 px-3 rounded-full font-medium ${typeClass} shadow-sm inline-block backdrop-blur-sm`}
                 whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400 }}
               >
                 {isRequest ? 'Loan Request' : 'Loan Offer'}
               </motion.span>
               <motion.h3 
-                className="font-semibold mt-3 flex items-center text-lg"
+                className="font-semibold flex items-center text-lg group-hover:text-primary transition-colors duration-300"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.1 }}
               >
-                <BitcoinIcon className="text-primary mr-2" size={20} />
+                <BitcoinIcon className="text-primary mr-2 group-hover:scale-110 transition-transform duration-300" size={20} />
                 <span>{formatBTC(loan.amount)}</span>
               </motion.h3>
             </div>
             <div className="text-right">
-              <p className="text-muted-foreground text-sm">Interest Rate</p>
+              <p className="text-muted-foreground text-sm mb-1">Interest Rate</p>
               <motion.p 
-                className={`font-bold text-lg ${isRequest ? 'text-primary' : 'text-accent'}`}
+                className={`font-bold text-xl ${isRequest ? 'text-primary' : 'text-accent'} group-hover:scale-110 transition-transform duration-200`}
                 whileHover={{ scale: 1.1 }}
               >
                 {loan.interest}%
@@ -60,36 +69,59 @@ export function MarketplaceLoanCard({
             </div>
           </div>
           
-          <div className="grid grid-cols-3 gap-4 text-sm text-muted-foreground mb-4">
-            <div className="text-center p-2 bg-muted/50 rounded-lg">
-              <p className="font-medium text-foreground">{loan.durationMonths}</p>
-              <p className="text-xs">months</p>
-            </div>
-            <div className="text-center p-2 bg-muted/50 rounded-lg">
-              <div className="flex items-center justify-center">
-                <i className="ri-star-fill text-warning mr-1"></i>
+          <div className="grid grid-cols-3 gap-4 text-sm mb-4">
+            <motion.div 
+              className="text-center p-3 bg-muted/30 rounded-lg backdrop-blur-sm border border-border/30 hover:bg-muted/50 transition-all duration-200"
+              whileHover={{ scale: 1.05, y: -2 }}
+            >
+              <p className="font-medium text-foreground text-lg">{loan.durationMonths}</p>
+              <p className="text-xs text-muted-foreground mt-1">months</p>
+            </motion.div>
+            <motion.div 
+              className="text-center p-3 bg-muted/30 rounded-lg backdrop-blur-sm border border-border/30 hover:bg-muted/50 transition-all duration-200"
+              whileHover={{ scale: 1.05, y: -2 }}
+            >
+              <div className="flex items-center justify-center mb-1">
+                <i className="ri-star-fill text-warning mr-1 text-sm"></i>
                 <span className="font-medium text-foreground">{rating}</span>
               </div>
-              <p className="text-xs">rating</p>
+              <p className="text-xs text-muted-foreground">rating</p>
+            </motion.div>
+            <motion.div 
+              className="text-center p-3 bg-muted/30 rounded-lg backdrop-blur-sm border border-border/30 hover:bg-muted/50 transition-all duration-200"
+              whileHover={{ scale: 1.05, y: -2 }}
+            >
+              <p className="font-medium text-foreground text-lg">{loan.hasCollateral ? 'Yes' : 'No'}</p>
+              <p className="text-xs text-muted-foreground mt-1">collateral</p>
+            </motion.div>
+          </div>
+
+          {/* Additional loan details */}
+          <div className="space-y-2 text-xs text-muted-foreground">
+            <div className="flex items-center justify-between">
+              <span>Currency:</span>
+              <span className="font-medium text-foreground">{loan.currency || 'BTC'}</span>
             </div>
-            <div className="text-center p-2 bg-muted/50 rounded-lg">
-              <p className="font-medium text-foreground">{loan.hasCollateral ? 'Yes' : 'No'}</p>
-              <p className="text-xs">collateral</p>
-            </div>
+            {loan.createdAt && (
+              <div className="flex items-center justify-between">
+                <span>Posted:</span>
+                <span className="font-medium text-foreground">
+                  {new Date(loan.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+            )}
           </div>
         </CardContent>
         
-        <CardFooter className="p-0 pt-2">
+        <CardFooter className="p-6 pt-0 relative z-10">
           <motion.div className="w-full">
             <Button 
-              className={`w-full font-medium shadow-md hover:shadow-lg transition-all duration-200 ${
+              className={`w-full font-medium shadow-md hover:shadow-lg button-hover transition-all duration-300 ${
                 isRequest 
-                  ? "bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70" 
-                  : "bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70"
+                  ? "btn-gradient-primary" 
+                  : "btn-gradient-accent"
               }`}
               onClick={handleAccept}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
             >
               <i className={`ri-${isRequest ? 'hand-coin' : 'money-dollar-circle'}-line mr-2`}></i>
               {isRequest ? 'Lend Now' : 'Borrow Now'}
